@@ -1,6 +1,5 @@
 <?php
-class database{
-
+class Database{
     public function getConnection(){
         $con = mysqli_connect("localhost", "root","", "crud_mysqli");
         // Check connection
@@ -10,5 +9,4 @@ class database{
         return $con;
     }
 }
-
 ?>
