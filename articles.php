@@ -1,16 +1,17 @@
 <?php
-require_once "database.php";
+require_once "config/database.php";
+require_once "record/Record.php";
 
 class Article{
     protected $con;
 
     public function __construct(){
         $this->con = new Database;
+        $this->db = new Record;
     }
 
     public function show(){
-        $query = "SELECT * FROM articles ORDER BY id DESC";
-        $result = mysqli_query($this->con->getConnection(), $query);
+        $result = $this->db->show('articles');
         $arr = array();
         foreach($result as $row){
             $data = array(
@@ -19,12 +20,16 @@ class Article{
             );
             array_push($arr,$data);
         }
-        return json_encode($arr);
+        $json = array(
+            'status' => 'success',
+            'type' => 'articles',
+            'data' => $arr
+        );
+        return json_encode($json);
     }
 
     public function read($id){
-        $query = "SELECT * FROM articles WHERE id = $id";
-        $result = mysqli_query($this->con->getConnection(), $query);
+        $result = $this->db->read($id, 'id', 'articles');
         $arr = array();
         foreach($result as $row){
             $data = array(
@@ -36,19 +41,12 @@ class Article{
         return json_encode($arr);
     }
 
-    public function add($title, $description, $created_by){
-        $query = "INSERT INTO articles (title, description, created_by) VALUES ($title, $description, $created_by)";
-        $result = mysqli_query($query);
-        if($result){
-            $hasil = 'success';
-        }else{
-            $hasil = 'failed';
-        }
-        return json_encode($hasil);
+    public function add($table, $data){
+        return $this->db->insert($table, $data);
     }
 
     public function update($id, $array){
-
+        
     }
 
     public function destroy($id){
@@ -56,5 +54,9 @@ class Article{
     }
 }
 
-$article = new Article;
-echo $article->add('buku cerita anak', 'buku tentang cerita si kancil', '2');
+// $article = new Article;
+// $data = array(
+//     'title' => 'halo Bos',
+//     'description' => 'keren bos'
+// );
+// echo $article->add('articles', $data);
