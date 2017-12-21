@@ -1,6 +1,8 @@
 <?php
+
 require_once "config/database.php";
 require_once "record/Record.php";
+require_once "record/Presenter.php";
 
 class Article{
     protected $con;
@@ -8,6 +10,7 @@ class Article{
     public function __construct(){
         $this->con = new Database;
         $this->db = new Record;
+        $this->presenter = new Presenter;
     }
 
     public function show(){
@@ -20,12 +23,7 @@ class Article{
             );
             array_push($arr,$data);
         }
-        $json = array(
-            'status' => 'success',
-            'type' => 'articles',
-            'data' => $arr
-        );
-        return json_encode($json);
+        return $this->presenter->response('success','articles', $arr);
     }
 
     public function read($id){
@@ -38,25 +36,49 @@ class Article{
             );
             array_push($arr,$data);
         }
-        return json_encode($arr);
+        return $this->presenter->response('success','articles', $arr);
     }
 
     public function add($table, $data){
-        return $this->db->insert($table, $data);
+        $result = $this->db->insert($table, $data);
+        if($result){
+            $hasil = 'success';
+        }else{
+            $hasil = 'failed';
+        }
+        return $this->presenter->response($hasil,'articles', $data);
     }
 
     public function update($id, $array){
-        
+        return $result = $this->db->update($id, 'id', $array, 'articles');
+        // if($result){
+        //     $hasil = 'sucess';
+        // }else{
+        //     $hasil = 'failed';
+        // }
+        // return $this->presenter->response($hasil,'articles', $array);
     }
 
     public function destroy($id){
-
+        $result = $this->db->delete($id,'id', 'articles');
+        if($result){
+            $data = array(
+                'message' => 'success',
+                'count' => $result
+            );
+        }else{
+            $data = array(
+                'message' => 'failed',
+                'count' => $result
+            );
+        }
+        return json_encode($data);
     }
 }
-
+// 
 // $article = new Article;
 // $data = array(
-//     'title' => 'halo Bos',
-//     'description' => 'keren bos'
+//     'title' => 'haloo',
+//     'description' => 'ini deskripti'
 // );
-// echo $article->add('articles', $data);
+// echo $article->update(4, $data);

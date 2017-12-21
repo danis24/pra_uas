@@ -29,22 +29,26 @@ class Record{
         }
         $query = "INSERT INTO ".$table." (" . implode(', ',array_keys($insData)) . ") VALUES (" . implode(', ',array_keys($prep)) . ")";
         $result = mysqli_query($this->connection->getConnection(), $query);
-        if($result){
-            $hasil = 'success';
-        }else{
-            $hasil = 'failed';
+        return $result;
+    }
+
+    public function update($id, $param, $data, $table){
+        $prep = array();
+        $val = array();
+        foreach($data as $key => $value){
+            $prep["'".$value."'"] = $value;
         }
-        $data = array(
-            'message' => $hasil,
-        );
-        return json_encode($data);
+        foreach($data as $key => $value){
+            $val["".$key.""] = $key;
+        }
+        $isi = array_keys($prep);
+        $var = implode(', ', $isi);
+        $query = "UPDATE ".$table." SET ".implode(', ', array_keys($prep))." WHERE ".$param." = ".$id;
+        return $var;
     }
 
-    public function update($id, $data){
-
-    }
-
-    public function delete($id, $table){
-
+    public function delete($id, $param, $table){
+        $query = "DELET FROM ".$table." WHERE ".$param." = ".$id;
+        return $query;
     }
 }
